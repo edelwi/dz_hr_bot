@@ -7,6 +7,7 @@ class Settings(BaseSettings):
 
     BOT_TOKEN: str
     EDITORS: Set[int] = set()
+    CHATS: Set[int] = set()
 
     class Config:
         case_sensitive = True

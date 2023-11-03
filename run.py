@@ -20,7 +20,10 @@ async def main():
     editors = settings.EDITORS
     editors_ids = set(editors)
 
-    await dp.start_polling(bot, editors=editors_ids, message_to_send="")
+    chats = settings.CHATS
+    chats_ids = set(chats)
+
+    await dp.start_polling(bot, editors=editors_ids, chats=chats_ids)
 
 
 if __name__ == "__main__":
