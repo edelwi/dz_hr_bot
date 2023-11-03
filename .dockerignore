@@ -1,0 +1,5 @@
+.github
+.ruff_cache
+venv
+.coverage
+app/.env
