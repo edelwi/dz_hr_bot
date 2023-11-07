@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dz-hr-bot-app
+spec:
+  replicas: 1  # Количество реплик бота (polling supporte only 1)
+  selector:
+    matchLabels:
+      app: dz-hr-bot
+  template:
+    metadata:
+      labels:
+        app: dz-hr-bot
+    spec:
+      containers:
+      - name: dz-hr-bot
+        image: edelwi/dz_hr_bot:0.0.1  # Имя и версия контейнера бота
+        env:
+          - name: BOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: dz-hr-bot-token-cred
+                key: dz-hr-bot-token
+          - name: EDITORS
+            value: "[1151496256, 453337448]"  # редактора, которые могут вызывать рассылку
+          - name: CHATS
+            value: "[-4067453977]"  # идентификаторы групп в которые бот будет слать сообщения
+        resources:
+          limits:
+            memory: 400Mi
+            cpu: 1
+          requests:
+            memory: 50Mi
+            cpu: 100m
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: edelwicred

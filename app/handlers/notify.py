@@ -76,7 +76,7 @@ async def cmd_notify(message: Message, editors: set[int], state: FSMContext):
 
 @router.message(Notification.edit)
 async def edit_message(message: Message, state: FSMContext):
-    logging.info(f"processing state edit")
+    logging.info("processing state edit")
 
     user_data[message.from_user.id] = message.md_text
     await message.reply(
@@ -89,7 +89,7 @@ async def edit_message(message: Message, state: FSMContext):
 
 @router.callback_query(F.data == "send_out")
 async def send_confirm(callback: CallbackQuery, state: FSMContext, chats: set[int]):
-    logging.info(f"processing callback send_confirm")
+    logging.info("processing callback send_confirm")
     text = user_data.get(callback.from_user.id)
     # logging.info(f"send_confirm {text=}")
     if text:
@@ -113,7 +113,7 @@ async def send_confirm(callback: CallbackQuery, state: FSMContext, chats: set[in
 
 @router.callback_query(F.data == "cancel")
 async def send_cancel(callback: CallbackQuery, state: FSMContext):
-    logging.info(f"processing callback send_cancel")
+    logging.info("processing callback send_cancel")
     user_data.setdefault(callback.from_user.id, None)
     await callback.answer("Отменено!", show_alert=True)
     await state.set_state(Notification.edit)
@@ -121,7 +121,7 @@ async def send_cancel(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "exit_notify")
 async def exit_dialog(callback: CallbackQuery, state: FSMContext):
-    logging.info(f"processing callback exit_dialog")
+    logging.info("processing callback exit_dialog")
     user_data.setdefault(callback.from_user.id, None)
     await callback.answer("Выход!", show_alert=True)
     await state.set_state(Notification.exit)
