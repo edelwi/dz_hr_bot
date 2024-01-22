@@ -12,6 +12,8 @@ kubectl create secret docker-registry edelwicred --docker-server=https://index.d
 
 ```shell
 kubectl create secret generic dz-hr-bot-token-cred --from-literal=dz-hr-bot-token='BOT:TOKEN'
+
+kubectl create secret generic dz-news-bot-token-cred --from-literal=dz-news-bot-token='6498082858:AAHaqiHjblptx4jbi_G2S8dzlFS4F3O5f70'
 ```
 
 ## Просмотр секретов
@@ -87,4 +89,18 @@ spec:
 
 ```shell
 kubectl delete deployment dz-hr-bot-app
+```
+
+# Docker build
+
+```shell
+docker build -t dz_hr_bot:0.0.x .
+```
+
+## Docker push
+
+```shell
+docker login # edelwi
+#change tag!!!
+docker push edelwi/dz_hr_bot:0.0.x
 ```

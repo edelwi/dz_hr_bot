@@ -2,7 +2,11 @@ import logging
 from typing import Optional
 
 from aiogram import Router, F
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram.exceptions import (
+    TelegramForbiddenError,
+    TelegramMigrateToChat,
+    TelegramBadRequest,
+)
 from aiogram.filters.callback_data import CallbackData
 from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
@@ -48,8 +52,10 @@ async def cmd_my_id(message: Message):
 async def cmd_chat_id(message: Message):
     logging.info("run command chat_id")
     chat_id = message.chat.id if message.chat.id < 0 else "🤷"
-    await message.answer(f"{chat_id} {message.chat.title}")
-    # logging.info("got chat_id")
+    try:
+        await message.answer(f"{chat_id} {message.chat.title}")
+    except TelegramBadRequest as e:
+        logging.error(f"Cannot answer, error: {e}")
 
 
 @router.message(Command("help"))
@@ -97,10 +103,17 @@ async def send_confirm(callback: CallbackQuery, state: FSMContext, chats: set[in
             "Отправляю!", show_alert=True, reply_markup=ReplyKeyboardRemove()
         )
         for chat_id in chats:
+            logging.info(f"Sending to chat: {chat_id}.")
             try:
                 await bot.send_message(chat_id, text, parse_mode="MarkdownV2")
             except TelegramForbiddenError as e:
-                logging.error(f"Cannot to send message to chat: {chat_id}? error: {e.message}")
+                logging.error(
+                    f"Cannot to send message to chat: {chat_id}? error: {e.message}"
+                )
+            except TelegramMigrateToChat as e:
+                logging.error(
+                    f"Cannot to send message to chat (supergroup): {chat_id}? error: {e.message}"
+                )
         user_data[callback.from_user.id] = None
     else:
         await callback.answer(
